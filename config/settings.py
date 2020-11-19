@@ -44,6 +44,7 @@ PROJECT_APPS = [
     "users.apps.UsersConfig",
     "posts.apps.PostsConfig",
     "likes.apps.LikesConfig",
+    "comments.apps.CommentsConfig",
 ]
 
 THIRD_PARTY_APPS = ["rest_framework"]

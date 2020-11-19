@@ -7,4 +7,4 @@ from . import models
 @admin.register(models.Like)
 class LikeAdmin(admin.ModelAdmin):
 
-    list_display = ("posts", "count_users")
+    list_display = ("post", "count_users")
