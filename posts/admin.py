@@ -11,7 +11,7 @@ class UserAdmin(admin.ModelAdmin):
         "name",
         "location",
         "caption",
-        "user", "count_photos",)
+        "user", "count_photos", "count_comment", "count_like")
 
     fieldsets = (
         ("포스트", {"fields": ("name", "location", "caption", "user")},),)

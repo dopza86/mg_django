@@ -9,7 +9,19 @@ class Post(core_models.TimeStampedModel):
     location = models.CharField(verbose_name="위치", max_length=256)
     caption = models.TextField(default="", verbose_name="설명", blank=True)
     user = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="posts")
+        "users.User", on_delete=models.CASCADE, related_name="post_user")
+
+    def count_comment(self):
+        count_comment = self.comments.count()
+
+        return count_comment
+    count_comment.short_description = "댓글"
+
+    def count_like(self):
+        count_like = self.likes.user.count()
+        print(count_like)
+        return count_like
+    count_like.short_description = "좋아요"
 
     class Meta:
         verbose_name = "포스트"
