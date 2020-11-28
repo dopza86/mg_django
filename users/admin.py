@@ -8,7 +8,7 @@ from . import models
 class UserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + \
         (("커스텀프로필", {"fields": ("bio", "target",
-                                "follower")},),)
+                                "follower",)},),)
     list_display = UserAdmin.list_display + ("following_count",
                                              "follower_count",
                                              "post_count",
