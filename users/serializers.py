@@ -18,6 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             "target",
             "follower",
             "password",
+            "email_secret",
 
         )
 
@@ -25,6 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
         password = validated_data.get("password")
         user = super().create(validated_data)
         user.set_password(password)
+        user.verify_email()
         user.save()
         return user
 

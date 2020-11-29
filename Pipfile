@@ -8,6 +8,9 @@ django = "*"
 djangorestframework = "*"
 pillow = "*"
 pyjwt = "*"
+django-import-export = "*"
+django-dotenv = "*"
+requests = "*"
 
 [dev-packages]
 flake8 = "*"
