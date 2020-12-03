@@ -15,11 +15,8 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
-            "target",
-            "follower",
             "password",
             "email_secret",
-
         )
 
     def create(self, validated_data):
@@ -32,10 +29,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
 
-        instance.first_name = validated_data.get(
-            "first_name", instance.first_name)
-        instance.last_name = validated_data.get(
-            "last_name", instance.last_name)
+        instance.first_name = validated_data.get("first_name",
+                                                 instance.first_name)
+        instance.last_name = validated_data.get("last_name",
+                                                instance.last_name)
         instance.email = validated_data.get("email", instance.email)
 
         instance.save()
@@ -44,21 +41,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserPasswordSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = (
             "id",
             "username",
-            "password",)
+            "password",
+        )
 
     def update(self, instance, validated_data):
         instance.password = make_password(
             validated_data.get("password", instance.password))
-        print(instance.password)
 
         instance.save()
         return instance
+
 
 # class UserPasswordSerializer(serializers.ModelSerializer):
 

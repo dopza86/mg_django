@@ -9,17 +9,17 @@ from . import models
 @admin.register(models.User)
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):
     fieldsets = UserAdmin.fieldsets + \
-        (("커스텀프로필", {"fields": ("login_method", "bio", "target",        "email_verified",
+        (("커스텀프로필", {"fields": ("login_method", "bio","email_verified",
                                 "email_secret",
-                                "follower", "avatar")},),)
-    list_display = UserAdmin.list_display + ("login_method",
-                                             "following_count",
-                                             "follower_count",
-                                             "post_count",
-                                             "like_count",
-                                             "comment_count",
-                                             "email_verified",
-                                             "email_secret",)
+                                "avatar")},),)
+    list_display = UserAdmin.list_display + (
+        "login_method",
+        "post_count",
+        "like_count",
+        "comment_count",
+        "email_verified",
+        "email_secret",
+    )
     list_filter = UserAdmin.list_filter
 
-    search_fields = ("username",)
+    search_fields = ("username", )

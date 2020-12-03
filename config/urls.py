@@ -23,4 +23,5 @@ urlpatterns = [
     path("api/v1/likes/", include("likes.urls")),
     path("api/v1/comments/", include("comments.urls")),
     path("api/v1/conversations/", include("conversations.urls")),
+    path("api/v1/follow_relation/", include("follow_relation.urls")),
 ]

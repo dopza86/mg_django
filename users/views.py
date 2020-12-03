@@ -4,6 +4,7 @@ import requests
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.core.files.base import ContentFile
 
 from rest_framework.permissions import IsAdminUser, AllowAny
 from .permissions import IsSelf
@@ -16,7 +17,6 @@ from rest_framework.response import Response
 from .serializers import UserSerializer, UserPasswordSerializer
 from .models import User
 from django.contrib.auth.hashers import make_password
-
 
 # Create your views here.
 
@@ -40,15 +40,15 @@ class UsersViewSet(ModelViewSet):
         user = User.objects.get(pk=pk)
 
         if user is not None:
-            serializer = UserSerializer(
-                user, data=request.data, partial=True)
+            serializer = UserSerializer(user, data=request.data, partial=True)
 
             if serializer.is_valid():
                 user = serializer.save()
 
                 return Response(UserSerializer(user).data)
             else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors,
+                                status=status.HTTP_400_BAD_REQUEST)
             return Response()
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -58,8 +58,9 @@ class UsersViewSet(ModelViewSet):
         user = User.objects.get(pk=pk)
 
         if user is not None:
-            serializer = UserPasswordSerializer(
-                user, data=request.data, partial=True)
+            serializer = UserPasswordSerializer(user,
+                                                data=request.data,
+                                                partial=True)
 
             if serializer.is_valid():
 
@@ -67,7 +68,8 @@ class UsersViewSet(ModelViewSet):
 
                 return Response(UserPasswordSerializer(user).data)
             else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors,
+                                status=status.HTTP_400_BAD_REQUEST)
             return Response()
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -80,9 +82,9 @@ class UsersViewSet(ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(username=username, password=password)
         if user is not None:
-            encoded_jwt = jwt.encode(
-                {"pk": user.pk}, settings.SECRET_KEY, algorithm="HS256"
-            )
+            encoded_jwt = jwt.encode({"pk": user.pk},
+                                     settings.SECRET_KEY,
+                                     algorithm="HS256")
             return Response(data={"token": encoded_jwt, "id": user.pk})
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -96,9 +98,6 @@ class UsersViewSet(ModelViewSet):
             f"https://kauth.kakao.com/oauth/authorize?client_id={app_key}&redirect_uri={redirect_uri}&response_type=code"
         )
 
-    class KakaoException(Exception):
-        pass
-
     @action(detail=False)
     def kakao_callback(self, request):
         try:
@@ -111,8 +110,8 @@ class UsersViewSet(ModelViewSet):
                 "redirect_uri": redirect_uri,
                 "code": code,
             }
-            token_request = requests.post(f"https://kauth.kakao.com/oauth/token",
-                                          data=post_data)
+            token_request = requests.post(
+                f"https://kauth.kakao.com/oauth/token", data=post_data)
             token_json = token_request.json()
             error = token_json.get("error", None)
             if error is not None:
