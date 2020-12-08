@@ -10,7 +10,6 @@ class FollowRelation(core_models.TimeStampedModel):
     followee = models.ManyToManyField("users.User",
                                       verbose_name="팔로워",
                                       blank=True,
-                                      null=True,
                                       related_name='followee')
 
     class Meta:

@@ -2,7 +2,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter()
-router.register("", views.PostViewSet)
-app_name = "posts"
+router.register(r'posts', views.PostViewSet)
+router.register(r'tags', views.TagViewSet)
 
 urlpatterns = router.urls

@@ -11,6 +11,7 @@ pyjwt = "*"
 django-import-export = "*"
 django-dotenv = "*"
 requests = "*"
+django-taggit = "*"
 
 [dev-packages]
 flake8 = "*"

@@ -6,14 +6,15 @@ from . import models
 @admin.register(models.Post)
 class PostAdmin(admin.ModelAdmin):
 
-    list_display = (
-        "name",
-        "location",
-        "caption",
-        "user", "count_photos", "count_comment", "count_like")
+    list_display = ("name", "location", "caption", "user", "count_photos",
+                    "count_comment", "count_like")
 
-    fieldsets = (
-        ("포스트", {"fields": ("name", "location", "caption", "user")},),)
+    fieldsets = ((
+        "포스트",
+        {
+            "fields": ("name", "location", "caption", "user", "tag")
+        },
+    ), )
 
     def count_photos(self, obj):
 
@@ -24,6 +25,9 @@ class PostAdmin(admin.ModelAdmin):
 
 @admin.register(models.Photo)
 class PhotoAdmin(admin.ModelAdmin):
-    list_display = (
-        "post",
-    )
+    list_display = ("post", )
+
+
+@admin.register(models.Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ("__str__", "count_post")
