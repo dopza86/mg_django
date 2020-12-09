@@ -13,7 +13,7 @@ from .permissions import IsSelf
 # Create your views here.
 
 
-class ConversationSerializer(ModelViewSet):
+class ConversationModelViewSet(ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
 
@@ -46,7 +46,30 @@ class ConversationSerializer(ModelViewSet):
                 conversation.participants.add(user_one, user_two)
 
             return redirect(
-                f"http://127.0.0.1:8000/api/v1/conversations/{conversation.pk}/"
+                f"http://127.0.0.1:8000/api/v1/conversations/conversation/{conversation.pk}/"
             )
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class MessageModelViewSet(ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+
+    @action(detail=False, methods=["post"])
+    def send_messages(self, request):
+        message = request.data.get("message")
+        pk = request.GET.get("pk", None)
+        conversation = Conversation.objects.get_or_none(pk=pk)
+        print(message)
+
+        if conversation is not None:
+            Message.objects.create(message=message,
+                                   user=self.request.user,
+                                   conversation=conversation)
+
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response(status=status.HTTP_200_OK)
