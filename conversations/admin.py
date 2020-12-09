@@ -6,7 +6,6 @@ from . import models
 
 @admin.register(models.Message)
 class MessageAdmin(admin.ModelAdmin):
-
     """메시지 어드민 정의"""
 
     list_display = ("__str__", "created")
@@ -18,7 +17,6 @@ class ConversationAdmin(admin.ModelAdmin):
     list_display = (
         "__str__",
         "count_participants",
-        "count_messages",
     )
 
     pass

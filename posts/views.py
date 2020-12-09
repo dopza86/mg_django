@@ -4,15 +4,11 @@ from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import PostSerializer, TagSerializer
-from .models import Post, Tag
+from .serializers import PostSerializer
+from .models import Post
 from .permissions import IsSelf
 
-
 # Create your views here.
-class TagViewSet(ModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
 
 
 class PostViewSet(ModelViewSet):
@@ -34,7 +30,7 @@ class PostViewSet(ModelViewSet):
         location = request.GET.get("location", None)
         caption = request.GET.get("caption", None)
         user = request.GET.get("user", None)
-        tag = request.GET.get("tag", None)
+        tags = request.GET.get("tags", None)
 
         filter_kwargs = {}
 
@@ -46,8 +42,8 @@ class PostViewSet(ModelViewSet):
             filter_kwargs["caption__istartswith"] = caption
         if user is not None:
             filter_kwargs["user"] = user
-        if tag is not None:
-            filter_kwargs["tag"] = tag
+        if tags is not None:
+            filter_kwargs["tags"] = tags
 
         paginator = self.paginator
         try:

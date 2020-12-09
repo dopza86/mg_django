@@ -12,6 +12,7 @@ django-import-export = "*"
 django-dotenv = "*"
 requests = "*"
 django-taggit = "*"
+django-taggit-serializer = "*"
 
 [dev-packages]
 flake8 = "*"

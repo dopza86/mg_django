@@ -47,7 +47,9 @@ PROJECT_APPS = [
     "conversations.apps.ConversationsConfig",
 ]
 
-THIRD_PARTY_APPS = ["rest_framework", "import_export", "taggit"]
+THIRD_PARTY_APPS = [
+    "rest_framework", "import_export", "taggit", "taggit_serializer"
+]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 

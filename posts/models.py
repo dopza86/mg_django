@@ -1,6 +1,8 @@
 from django.db import models
 from core import models as core_models
 
+from taggit.managers import TaggableManager
+
 
 # Create your models here.
 class Photo(core_models.TimeStampedModel):
@@ -17,24 +19,6 @@ class Photo(core_models.TimeStampedModel):
         verbose_name_plural = "사진"
 
 
-class Tag(core_models.TimeStampedModel):
-    name = models.CharField(verbose_name="태그", max_length=32)
-
-    def __str__(self):
-        return self.name
-
-    def count_post(self):
-        count_post = self.post_tag.count()
-
-        return count_post
-
-    count_post.short_description = "포스트"
-
-    class Meta:
-        verbose_name = "태그"
-        verbose_name_plural = "태그"
-
-
 class Post(core_models.TimeStampedModel):
     name = models.CharField(
         verbose_name="이름",
@@ -48,7 +32,7 @@ class Post(core_models.TimeStampedModel):
     user = models.ForeignKey("users.User",
                              on_delete=models.CASCADE,
                              related_name="post_user")
-    tag = models.ManyToManyField("Tag", related_name="post_tag", blank=True)
+    tags = TaggableManager()
 
     def count_comment(self):
         count_comment = self.comments.count()

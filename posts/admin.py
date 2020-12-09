@@ -12,7 +12,7 @@ class PostAdmin(admin.ModelAdmin):
     fieldsets = ((
         "포스트",
         {
-            "fields": ("name", "location", "caption", "user", "tag")
+            "fields": ("name", "location", "caption", "user", "tags")
         },
     ), )
 
@@ -26,8 +26,3 @@ class PostAdmin(admin.ModelAdmin):
 @admin.register(models.Photo)
 class PhotoAdmin(admin.ModelAdmin):
     list_display = ("post", )
-
-
-@admin.register(models.Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ("__str__", "count_post")
