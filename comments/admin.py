@@ -7,4 +7,10 @@ from . import models
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
 
-    list_display = ("post", "users", "text")
+    list_display = ("post", )
+
+
+@admin.register(models.Text)
+class TextAdmin(admin.ModelAdmin):
+
+    list_display = ("user", "comment")

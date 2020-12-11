@@ -18,7 +18,7 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     def create(self, validated_data):
         tags_list = validated_data.pop('tags')
-        print(tags_list)
+
         request = self.context.get("request")
         images_data = self.context['request'].FILES
         user = request.user

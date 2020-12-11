@@ -7,7 +7,7 @@ from . import models
 class PostAdmin(admin.ModelAdmin):
 
     list_display = ("name", "location", "caption", "user", "count_photos",
-                    "count_comment", "count_like")
+                    "count_like")
 
     fieldsets = ((
         "포스트",

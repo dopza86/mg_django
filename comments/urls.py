@@ -2,7 +2,7 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter()
-router.register("", views.CommentViewSet)
-app_name = "comments"
+router.register(r"comments", views.CommentViewSet)
+router.register(r"text", views.TextViewSet)
 
 urlpatterns = router.urls

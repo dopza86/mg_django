@@ -34,12 +34,12 @@ class Post(core_models.TimeStampedModel):
                              related_name="post_user")
     tags = TaggableManager()
 
-    def count_comment(self):
-        count_comment = self.comments.count()
+    # def count_comment(self):
+    #     count_comment = self.comments.count()
 
-        return count_comment
+    #     return count_comment
 
-    count_comment.short_description = "댓글"
+    # count_comment.short_description = "댓글"
 
     def count_like(self):
         count_like = self.likes.user.count()

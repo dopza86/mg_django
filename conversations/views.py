@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from users.models import User
-from .permissions import IsSelf
+from .permissions import IsSelf, MyMessage
 # Create your views here.
 
 
@@ -56,20 +56,33 @@ class MessageModelViewSet(ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
+    def get_permissions(self):
+        permission_classes = []
+        if self.action == "list":
+            permission_classes = [IsAdminUser]
+        elif self.action == "create" or self.action == "retrieve":
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [MyMessage]
+        return [permission() for permission in permission_classes]
+
     @action(detail=False, methods=["post"])
     def send_messages(self, request):
         message = request.data.get("message")
         pk = request.GET.get("pk", None)
         conversation = Conversation.objects.get_or_none(pk=pk)
-        print(message)
+        print(conversation)
 
-        if conversation is not None:
-            Message.objects.create(message=message,
-                                   user=self.request.user,
-                                   conversation=conversation)
+        if request.user.is_authenticated:
+            if not conversation:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+            if message is not None:
+                Message.objects.create(message=message,
+                                       user=self.request.user,
+                                       conversation=conversation)
 
-            return Response(status=status.HTTP_200_OK)
+            return redirect(
+                f"http://127.0.0.1:8000/api/v1/conversations/conversation/{conversation.pk}/"
+            )
         else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        return Response(status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_403_FORBIDDEN)

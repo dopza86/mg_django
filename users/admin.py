@@ -16,7 +16,7 @@ class UserAdmin(ImportExportMixin, admin.ModelAdmin):
         "login_method",
         "post_count",
         "like_count",
-        "comment_count",
+        # "comment_count",
         "email_verified",
         "email_secret",
     )

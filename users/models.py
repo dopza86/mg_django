@@ -91,11 +91,11 @@ class User(AbstractUser):
 
     like_count.short_description = "좋아요"
 
-    def comment_count(self):
-        comment_count = self.comments.count()
-        return comment_count
+    # def comment_count(self):
+    #     comment_count = self.comments.count()
+    #     return comment_count
 
-    comment_count.short_description = "작성댓글"
+    # comment_count.short_description = "작성댓글"
 
     def __str__(self):
         return self.username

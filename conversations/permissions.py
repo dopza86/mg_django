@@ -5,3 +5,9 @@ class IsSelf(BasePermission):
     def has_object_permission(self, request, view, conversations):
 
         return bool(conversations.participants == request.user)
+
+
+class MyMessage(BasePermission):
+    def has_object_permission(self, request, view, Message):
+
+        return bool(Message.user == request.user)

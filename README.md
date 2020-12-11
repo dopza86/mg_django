@@ -14,14 +14,14 @@
 ->태그(o)<br>
 
 3.Likes<br>
-->ToggleLikes<br>
+->ToggleLikes(o)<br>
 
 4.FollowRelation<br>
 ->Follow//UnFollow(o)<br>
 
 5.Conversation<br>
-->대화방<br>
-->메시지 송수신<br>
+->대화방(o)<br>
+->메시지 송수신(o)<br>
 
 6.Comments<br>
 ->Post에 댓글달기 <br>

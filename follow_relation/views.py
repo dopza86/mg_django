@@ -1,13 +1,10 @@
 from django.shortcuts import render
-from django.db import IntegrityError
-
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-
 from .serializers import FollowRelationSerializer
 from .models import FollowRelation
 from users.models import User
@@ -30,20 +27,19 @@ class FollowRelationViewSet(ModelViewSet):
             permission_classes = [IsSelf]
         return [permission() for permission in permission_classes]
 
-    @action(detail=True)
+    @action(detail=False)
     @permission_classes([IsAuthenticated])
-    def follow(self, request, pk):
+    def follow(self, request):
         user = request.user
-
+        follow_pk = request.GET.get("follow_pk", None)
         if user.id is not None:
             try:
                 FollowRelation.objects.get(follower=user)
             except FollowRelation.DoesNotExist:
                 FollowRelation.objects.create(follower=user)
-                return Response(status=status.HTTP_200_OK)
 
             target = FollowRelation.objects.get(follower=user).followee
-            target_user = User.objects.get(pk=pk)
+            target_user = User.objects.get(pk=follow_pk)
             if user == target_user:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             if target_user in target.all():
