@@ -8,6 +8,7 @@ from . import models
 
 @admin.register(models.User)
 class UserAdmin(ImportExportMixin, admin.ModelAdmin):
+    list_per_page = 10
     fieldsets = UserAdmin.fieldsets + \
         (("커스텀프로필", {"fields": ("login_method", "bio","email_verified",
                                 "email_secret",

@@ -5,6 +5,7 @@ from . import models
 
 @admin.register(models.Post)
 class PostAdmin(admin.ModelAdmin):
+    list_per_page = 10
 
     list_display = ("name", "location", "caption", "user", "count_photos",
                     "count_like")

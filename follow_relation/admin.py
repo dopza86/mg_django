@@ -6,4 +6,6 @@ from . import models
 
 @admin.register(models.FollowRelation)
 class FollowRelationAdmin(admin.ModelAdmin):
-    list_display = ("follower", )
+    list_per_page = 10
+
+    list_display = ("follower", "count_followee")

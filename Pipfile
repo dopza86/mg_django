@@ -13,6 +13,7 @@ django-dotenv = "*"
 requests = "*"
 django-taggit = "*"
 django-taggit-serializer = "*"
+django-seed = "*"
 
 [dev-packages]
 flake8 = "*"

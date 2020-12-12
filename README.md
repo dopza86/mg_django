@@ -24,4 +24,4 @@
 ->메시지 송수신(o)<br>
 
 6.Comments<br>
-->Post에 댓글달기 <br>
+->Post에 댓글달기(o) <br>

@@ -48,7 +48,8 @@ PROJECT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "rest_framework", "import_export", "taggit", "taggit_serializer"
+    "rest_framework", "import_export", "taggit", "taggit_serializer",
+    "django_seed"
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
