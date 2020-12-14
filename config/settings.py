@@ -48,8 +48,15 @@ PROJECT_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "rest_framework", "import_export", "taggit", "taggit_serializer",
-    "django_seed"
+    "rest_framework",
+    "import_export",
+    "taggit",
+    "taggit_serializer",
+    "django_seed",
+    "rest_auth",
+    'rest_framework.authtoken',
+    'rest_auth.registration',
+    'allauth',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
@@ -165,3 +172,8 @@ EMAIL_HOST_USER = os.environ.get("MAILGUN_USERNAME")
 EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
 
 EMAIL_FROM = "noreply@sandbox1eef570fd7ee4a9ca110f0f2fad9115e.mailgun.org"
+
+# rest_auth
+
+REST_USE_JWT = True
+ACCOUNT_LOGOUT_ON_GET = True
