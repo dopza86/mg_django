@@ -17,6 +17,7 @@ django-seed = "*"
 django-rest-auth = "*"
 django-allauth = "*"
 djangorestframework-jwt = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 flake8 = "*"
