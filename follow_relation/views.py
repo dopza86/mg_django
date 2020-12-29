@@ -51,3 +51,13 @@ class FollowRelationViewSet(ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False)
+    @permission_classes([IsAuthenticated])
+    def my_follow(self, request):
+        user = request.user
+
+        result = FollowRelation.objects.get(follower=user)
+        serializer = FollowRelationSerializer(result)
+        print(serializer.data)
+        return Response(serializer.data)

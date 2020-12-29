@@ -35,6 +35,12 @@ class UsersViewSet(ModelViewSet):
             permission_classes = [IsSelf]
         return [permission() for permission in permission_classes]
 
+    @action(detail=False, methods=["get"])
+    def me(self, request):
+        me = request.user
+        serializer = UserSerializer(me)
+        return Response(serializer.data)
+
     @action(detail=True, methods=["put"])
     def update_user(self, request, pk):
         user = User.objects.get(pk=pk)
@@ -74,20 +80,21 @@ class UsersViewSet(ModelViewSet):
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    # @action(detail=False, methods=["post"])
-    # def login(self, request):
-    #     username = request.data.get("username")
-    #     password = request.data.get("password")
-    #     if not username or not password:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
-    #     user = authenticate(username=username, password=password)
-    #     if user is not None:
-    #         encoded_jwt = jwt.encode({"pk": user.pk},
-    #                                  settings.SECRET_KEY,
-    #                                  algorithm="HS256")
-    #         return Response(data={"token": encoded_jwt, "id": user.pk})
-    #     else:
-    #         return Response(status=status.HTTP_401_UNAUTHORIZED)
+    @action(detail=False, methods=["post"])
+    def login(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+        if not username or not password:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            encoded_jwt = jwt.encode({"pk": user.pk},
+                                     settings.SECRET_KEY,
+                                     algorithm="HS256")
+            return Response(data={"token": encoded_jwt, "id": user.pk})
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
     # restauth 로 로그인 구현
     @action(detail=False)
     def kakao_login(self, request):
@@ -154,7 +161,7 @@ class UsersViewSet(ModelViewSet):
                         user.avatar.save(f"{nickname}-사진",
                                          ContentFile(photo_request.content))
                 login(request, user)
-                messages.success(request, f"{user.username} 님 반갑습니다")
+
                 return Response(status=status.HTTP_200_OK)
 
             return Response(status=status.HTTP_200_OK)

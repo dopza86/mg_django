@@ -54,7 +54,7 @@ class PostViewSet(ModelViewSet):
         results = paginator.paginate_queryset(posts, request)
         serializer = PostSerializer(results,
                                     many=True,
-                                    context={"reqeust": request})
+                                    context={"request": request})
         return paginator.get_paginated_response(serializer.data)
 
     # @action(detail=False, methods=["post"])
