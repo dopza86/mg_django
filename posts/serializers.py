@@ -31,4 +31,4 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        exclude = ("")
+        fields = ('id', "user", "photos", 'count_like', "tags")

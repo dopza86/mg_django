@@ -32,7 +32,7 @@ class LikeViewSet(ModelViewSet):
 
     @action(detail=False)
     @permission_classes([IsAuthenticated])
-    def like(self, request):
+    def handle_like(self, request):
         user = request.user
         post_pk = request.GET.get("post_pk", None)
         post = Post.objects.get_or_none(pk=post_pk)
@@ -52,3 +52,16 @@ class LikeViewSet(ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False)
+    def post_like(self, request):
+        user = request.user
+        post_pk = request.GET.get("post_pk", None)
+        post = Post.objects.get_or_none(pk=post_pk)
+        if post is not None:
+            result = Like.objects.get(post=post)
+            serializer = LikeSerializer(result)
+            print(serializer.data)
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
