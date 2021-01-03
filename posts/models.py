@@ -41,12 +41,12 @@ class Post(core_models.TimeStampedModel):
 
     # count_comment.short_description = "댓글"
 
-    def count_like(self):
-        count_like = self.likes.user.count()
+    # def count_like(self):
+    #     count_like = self.likes.user.count()
 
-        return count_like
+    #     return count_like
 
-    count_like.short_description = "좋아요"
+    # count_like.short_description = "좋아요"
 
     class Meta:
         verbose_name = "포스트"
