@@ -32,21 +32,22 @@ class FollowRelationViewSet(ModelViewSet):
     def follow(self, request):
         user = request.user
         follow_pk = request.GET.get("follow_pk", None)
+        target_user = User.objects.get(pk=follow_pk)
         if user.id is not None:
             try:
-                FollowRelation.objects.get(follower=user)
+                FollowRelation.objects.get(follower=target_user)
             except FollowRelation.DoesNotExist:
-                FollowRelation.objects.create(follower=user)
+                FollowRelation.objects.create(follower=target_user)
 
-            target = FollowRelation.objects.get(follower=user).followee
-            target_user = User.objects.get(pk=follow_pk)
+            target = FollowRelation.objects.get(follower=target_user).followee
+
             if user == target_user:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-            if target_user in target.all():
-                target.remove(target_user)
+            if user in target.all():
+                target.remove(user)
             else:
-                target.add(target_user)
-            FollowRelation.objects.get(follower=user).save()
+                target.add(user)
+            FollowRelation.objects.get(follower=target_user).save()
 
             return Response(status=status.HTTP_200_OK)
         else:
@@ -59,5 +60,5 @@ class FollowRelationViewSet(ModelViewSet):
 
         result = FollowRelation.objects.get(follower=user)
         serializer = FollowRelationSerializer(result)
-        print(serializer.data)
+
         return Response(serializer.data)

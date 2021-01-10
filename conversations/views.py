@@ -39,7 +39,6 @@ class ConversationModelViewSet(ModelViewSet):
             try:
                 conversation_filter = queryset.filter(participants=user_one.pk)
                 conversation = queryset.get(participants=user_two.pk)
-                print("conversation:", conversation.pk)
 
             except Conversation.DoesNotExist:
                 conversation = Conversation.objects.create()
@@ -71,7 +70,6 @@ class MessageModelViewSet(ModelViewSet):
         message = request.data.get("message")
         pk = request.GET.get("pk", None)
         conversation = Conversation.objects.get_or_none(pk=pk)
-        print(conversation)
 
         if request.user.is_authenticated:
             if not conversation:

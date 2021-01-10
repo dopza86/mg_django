@@ -1,11 +1,13 @@
 from rest_framework import serializers
 from users.serializers import UserSerializer
 from likes.serializers import LikeSerializer
+from comments.serializers import CommentSerializer
 from taggit_serializer.serializers import (TagListSerializerField,
                                            TaggitSerializer)
 
 from .models import Post, Photo
 from likes import models as likes_models
+from comments import models as comments_models
 
 
 class PhotoSerializer(serializers.ModelSerializer):
@@ -20,6 +22,7 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     is_liked = serializers.SerializerMethodField()
     like_list = serializers.SerializerMethodField()
+    comment_list = serializers.SerializerMethodField()
     tags = TagListSerializerField()
 
     def create(self, validated_data):
@@ -55,6 +58,18 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
             except likes_models.Like.DoesNotExist:
                 pass
 
+    def get_comment_list(self, obj):
+        request = self.context.get("request")
+        if request is not None:
+            try:
+                result = comments_models.Comment.objects.filter(
+                    post__id=obj.id)
+                return CommentSerializer(result, many=True,
+                                         read_only=True).data
+            except comments_models.Comment.DoesNotExist:
+                pass
+
     class Meta:
         model = Post
-        fields = ('id', "user", "photos", "tags", "is_liked", "like_list")
+        fields = ('id', "user", "photos", "tags", "is_liked", "like_list",
+                  "comment_list", "caption", "location")

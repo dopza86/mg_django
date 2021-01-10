@@ -1,16 +1,20 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from .models import User
+from follow_relation import models as follow_models
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True)
+    is_follower = serializers.SerializerMethodField()
+    is_followee = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ("id", "username", "first_name", "last_name", "email",
-                  "password", "email_secret", "avatar")
+                  "password", "email_secret", "avatar", "is_follower",
+                  "is_followee")
 
     def create(self, validated_data):
 
@@ -32,6 +36,28 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+    def get_is_follower(self, obj):
+        if 'request' in self.context:
+            request = self.context['request']
+            try:
+                follow_models.FollowRelation.objects.get(
+                    follower__id=obj.id, followee__id=request.user.id)
+                return True
+            except follow_models.FollowRelation.DoesNotExist:
+                return False
+        return False
+
+    def get_is_followee(self, obj):
+        if 'request' in self.context:
+            request = self.context['request']
+            try:
+                follow_models.FollowRelation.objects.get(
+                    followee__id=obj.id, follower__id=request.user.id)
+                return True
+            except follow_models.FollowRelation.DoesNotExist:
+                return False
+        return False
 
 
 class UserPasswordSerializer(serializers.ModelSerializer):

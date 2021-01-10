@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, permissions
 from posts.models import Post
-from .serializers import CommentSerializer, TextSerializer
-from .models import Comment, Text
-from .permissions import IsSelf, MyText
+from .serializers import CommentSerializer
+from .models import Comment
+from .permissions import IsSelf
 # Create your views here.
 
 
@@ -24,52 +24,37 @@ class CommentViewSet(ModelViewSet):
             permission_classes = [IsSelf]
         return [permission() for permission in permission_classes]
 
-    @action(detail=False)
+    @action(methods=["post"], detail=False)
     def go_comment(self, request):
         user = request.user
-        pk = request.GET.get("pk", None)
+        
+        pk = request.GET.get("post_pk", None)
         post = Post.objects.get_or_none(pk=pk)
-        queryset = Comment.objects.all()
+        print(post)
         if post is not None:
-            try:
-                comment = queryset.get(post=post)
-            except Comment.DoesNotExist:
-                comment = Comment.objects.create(post=post)
-            return redirect(
-                f"http://127.0.0.1:8000/api/v1/comments/text/write_text/?pk={comment.pk}"
-            )
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+            text = request.data.get("text")
+            print(text)
+            comment = Comment.objects.create(post=post, user=user, text=text)
+            serializer = CommentSerializer(comment).data
 
-
-class TextViewSet(ModelViewSet):
-    queryset = Text.objects.all()
-    serializer_class = TextSerializer
-
-    def get_permissions(self):
-        if self.action == 'list' or self.action == "retrieve":
-            permission_classes = [permissions.AllowAny]
-        elif self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated]
+            return Response(data=serializer, status=status.HTTP_201_CREATED)
         else:
-            permission_classes = [MyText]
-        return [permission() for permission in permission_classes]
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=["post"])
-    def write_text(self, request):
+    @action(detail=False)
+    def get_comment(self, request):
+
         user = request.user
-        text = request.data.get("text")
-        pk = request.GET.get("pk", None)
+        post_pk = request.GET.get("post_pk", None)
+        post = Post.objects.get_or_none(pk=post_pk)
+        paginator = self.paginator
+        if post is not None:
+            filter_kwargs = {}
+            filter_kwargs["post"] = post
+            posts = Comment.objects.filter(**filter_kwargs).order_by('-id')
+            results = paginator.paginate_queryset(posts, request)
+            serializer = CommentSerializer(results, read_only=True, many=True)
 
-        comment = Comment.objects.get_or_none(pk=pk)
-
-        if request.user.is_authenticated:
-            if not text:
-                return Response(status=status.HTTP_404_NOT_FOUND)
-            if text is not None:
-                Text.objects.create(text=text, user=user, comment=comment)
-
-            return redirect(
-                f"http://127.0.0.1:8000/api/v1/comments/comments/{comment.pk}/"
-            )
+            return Response(serializer.data)
         else:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+            return Response(status=status.HTTP_404_NOT_FOUND)

@@ -6,11 +6,6 @@ from . import models
 
 @admin.register(models.Comment)
 class CommentAdmin(admin.ModelAdmin):
+    list_per_page = 10
 
-    list_display = ("post", )
-
-
-@admin.register(models.Text)
-class TextAdmin(admin.ModelAdmin):
-
-    list_display = ("user", "comment")
+    list_display = ("post", "text", "user")

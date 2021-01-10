@@ -34,7 +34,7 @@ class Command(BaseCommand):
         )
 
         created = seeder.execute()
-        print(seeder)
+
         cleaned = flatten(list(created.values()))
 
         # 생성된 리스트의 pk 값을 가져 올수 있다

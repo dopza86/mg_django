@@ -62,6 +62,5 @@ class PostViewSet(ModelViewSet):
     # def create_post(self, request):
     #     user = request.user
     #     tag = self.validated_data
-    #     print({"name": tag})
 
     #     return Response(status=status.HTTP_200_OK)
