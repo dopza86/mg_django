@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from rest_framework.decorators import action, permission_classes
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from rest_framework.pagination import PageNumberPagination
+
 from posts.models import Post
 from .serializers import CommentSerializer
 from .models import Comment
@@ -11,8 +13,15 @@ from .permissions import IsSelf
 # Create your views here.
 
 
+class CustomResultsSetPagination(PageNumberPagination):
+    page_size = 15
+    page_size_query_param = 'page_size'
+
+
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
+    pagination_class = CustomResultsSetPagination
+
     serializer_class = CommentSerializer
 
     def get_permissions(self):
@@ -27,13 +36,13 @@ class CommentViewSet(ModelViewSet):
     @action(methods=["post"], detail=False)
     def go_comment(self, request):
         user = request.user
-        
+
         pk = request.GET.get("post_pk", None)
         post = Post.objects.get_or_none(pk=pk)
         print(post)
         if post is not None:
             text = request.data.get("text")
-            print(text)
+            print(request.data)
             comment = Comment.objects.create(post=post, user=user, text=text)
             serializer = CommentSerializer(comment).data
 

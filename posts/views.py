@@ -24,38 +24,60 @@ class PostViewSet(ModelViewSet):
             permission_classes = [IsSelf]
         return [permission() for permission in permission_classes]
 
-    @action(detail=False)
+    @action(methods=["post"], detail=False)
     def search(self, request):
-        name = request.GET.get("name", None)
-        location = request.GET.get("location", None)
-        caption = request.GET.get("caption", None)
-        user = request.GET.get("user", None)
-        tags = request.GET.get("tags", None)
-
+        name = request.data.get("name", None)
+        location = request.data.get("location", None)
+        caption = request.data.get("caption", None)
+        user = request.data.get("user", None)
+        tags = request.data.get("tags", None)
+        print(user)
         filter_kwargs = {}
 
-        if name is not None:
-            filter_kwargs["name__istartswith"] = name
-        if location is not None:
-            filter_kwargs["location__icontains"] = location
-        if caption is not None:
-            filter_kwargs["caption__istartswith"] = caption
         if user is not None:
             filter_kwargs["user"] = user
+            posts = Post.objects.filter(user__username=user).distinct()
+            paginator = self.paginator
+            results = paginator.paginate_queryset(posts, request)
+            print(results)
+            serializer = PostSerializer(results,
+                                        many=True,
+                                        context={"request": request})
+
+            return paginator.get_paginated_response(serializer.data)
         if tags is not None:
             filter_kwargs["tags"] = tags
+            hashtags = tags.split(",")
+            paginator = self.paginator
+            posts = Post.objects.filter(tags__name__in=hashtags).distinct()
+            results = paginator.paginate_queryset(posts, request)
+            print(results)
+            serializer = PostSerializer(results,
+                                        many=True,
+                                        context={"request": request})
 
-        paginator = self.paginator
-        try:
-            posts = Post.objects.filter(**filter_kwargs)
-        except ValueError:
-            posts = Post.objects.all()
+            return paginator.get_paginated_response(serializer.data)
 
-        results = paginator.paginate_queryset(posts, request)
-        serializer = PostSerializer(results,
-                                    many=True,
-                                    context={"request": request})
-        return paginator.get_paginated_response(serializer.data)
+        else:
+            if name is not None:
+                filter_kwargs["name__istartswith"] = name
+            if location is not None:
+                filter_kwargs["location__icontains"] = location
+            if caption is not None:
+                filter_kwargs["caption__istartswith"] = caption
+
+            paginator = self.paginator
+            try:
+                posts = Post.objects.filter(**filter_kwargs)
+            except ValueError:
+                posts = Post.objects.all()
+
+            results = paginator.paginate_queryset(posts, request)
+            print(results)
+            serializer = PostSerializer(results,
+                                        many=True,
+                                        context={"request": request})
+            return paginator.get_paginated_response(serializer.data)
 
     # @action(detail=False, methods=["post"])
     # @permission_classes([permissions.IsAuthenticated])

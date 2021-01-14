@@ -9,6 +9,7 @@ from .serializers import FollowRelationSerializer
 from .models import FollowRelation
 from users.models import User
 from .permissions import IsSelf
+from users import serializers as user_serializer
 
 # Create your views here.
 
@@ -48,8 +49,8 @@ class FollowRelationViewSet(ModelViewSet):
             else:
                 target.add(user)
             FollowRelation.objects.get(follower=target_user).save()
-
-            return Response(status=status.HTTP_200_OK)
+            serializer = user_serializer.UserSerializer(target_user).data
+            return Response(data=serializer, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
