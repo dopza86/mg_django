@@ -30,7 +30,7 @@ class ConversationModelViewSet(ModelViewSet):
         elif self.action == "create" or self.action == "retrieve":
             permission_classes = [IsAuthenticated]
         else:
-            permission_classes = [IsSelf]
+            permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
 
     @action(detail=False)
@@ -44,7 +44,9 @@ class ConversationModelViewSet(ModelViewSet):
         if user_one is not None and user_two is not None:
             try:
                 conversation_filter = queryset.filter(participants=user_one.pk)
-                conversation = queryset.get(participants=user_two.pk)
+                # conversation = Conversation.objects.get(
+                #     Q(participants=user_one) & Q(participants=user_two))
+                conversation = conversation_filter.get(participants=user_two)
                 serializer = ConversationSerializer(conversation)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except Conversation.DoesNotExist:
