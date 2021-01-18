@@ -15,7 +15,7 @@ from .permissions import IsSelf, MyMessage
 
 # Create your views here.
 class CustomResultsSetPagination(PageNumberPagination):
-    page_size = 15
+    page_size = 30
     page_size_query_param = 'page_size'
 
 
@@ -30,7 +30,7 @@ class ConversationModelViewSet(ModelViewSet):
         elif self.action == "create" or self.action == "retrieve":
             permission_classes = [IsAuthenticated]
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsSelf]
         return [permission() for permission in permission_classes]
 
     @action(detail=False)
@@ -57,29 +57,11 @@ class ConversationModelViewSet(ModelViewSet):
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    # @action(detail=False)
-    # def get_conversation(self, request):
-    #     a_pk = request.GET.get("a_pk", None)
-    #     b_pk = request.GET.get("b_pk", None)
-    #     user_one = User.objects.get_or_none(pk=a_pk)
-    #     user_two = User.objects.get_or_none(pk=b_pk)
-    #     queryset = Conversation.objects.all()
-
-    #     if user_one is not None and user_two is not None:
-    #         try:
-    #             conversation_filter = queryset.filter(participants=user_one.pk)
-    #             conversation = queryset.get(participants=user_two.pk)
-    #         return Response(status=status.HTTP_201_CREATED)
-
-    #         except Conversation.DoesNotExist:
-    #             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    #     return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
 class MessageModelViewSet(ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    pagination_class = CustomResultsSetPagination
 
     def get_permissions(self):
         permission_classes = []
@@ -96,16 +78,31 @@ class MessageModelViewSet(ModelViewSet):
         message = request.data.get("message")
         pk = request.GET.get("pk", None)
         conversation = Conversation.objects.get_or_none(pk=pk)
-
-        print(conversation)
+        paginator = self.paginator
+        print(request.data)
+        print(message)
         if request.user.is_authenticated:
             if not conversation:
                 return Response(status=status.HTTP_404_NOT_FOUND)
             if message is not None:
-                Message.objects.create(message=message,
-                                       user=self.request.user,
-                                       conversation=conversation)
-
-            return Response(status=status.HTTP_201_CREATED)
+                message = Message.objects.create(message=message,
+                                                 user=self.request.user,
+                                                 conversation=conversation)
+                serializer = MessageSerializer(message)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
+
+    @action(detail=False)
+    def get_messages(self, request):
+        pk = request.GET.get("pk", None)
+        conversation = Conversation.objects.get_or_none(pk=pk)
+        paginator = self.paginator
+        if conversation is not None:
+            message = Message.objects.filter(conversation=conversation)
+            # .order_by('-id')
+            results = paginator.paginate_queryset(message, request)
+            serializer = MessageSerializer(results, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)

@@ -5,6 +5,9 @@ from .models import Conversation, Message
 
 
 class MessageSerializer(serializers.ModelSerializer):
+
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Message
         exclude = ("")

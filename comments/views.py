@@ -39,10 +39,10 @@ class CommentViewSet(ModelViewSet):
 
         pk = request.GET.get("post_pk", None)
         post = Post.objects.get_or_none(pk=pk)
-        print(post)
+
         if post is not None:
             text = request.data.get("text")
-            print(request.data)
+
             comment = Comment.objects.create(post=post, user=user, text=text)
             serializer = CommentSerializer(comment).data
 

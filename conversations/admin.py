@@ -7,7 +7,7 @@ from . import models
 @admin.register(models.Message)
 class MessageAdmin(admin.ModelAdmin):
     """메시지 어드민 정의"""
-
+    list_per_page = 50
     list_display = ("__str__", "created")
 
 
