@@ -60,7 +60,7 @@ class CommentViewSet(ModelViewSet):
         if post is not None:
             filter_kwargs = {}
             filter_kwargs["post"] = post
-            posts = Comment.objects.filter(**filter_kwargs).order_by('-id')
+            posts = Comment.objects.filter(**filter_kwargs)
             results = paginator.paginate_queryset(posts, request)
             serializer = CommentSerializer(results, read_only=True, many=True)
 

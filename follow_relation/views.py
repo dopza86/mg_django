@@ -55,11 +55,33 @@ class FollowRelationViewSet(ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False)
-    @permission_classes([IsAuthenticated])
-    def my_follow(self, request):
-        user = request.user
+    def my_followee(self, request):
+        pk = request.GET.get("pk", None)
+        user = User.objects.get_or_none(pk=pk)
 
-        result = FollowRelation.objects.get(follower=user)
-        serializer = FollowRelationSerializer(result)
+        if user is not None:
 
-        return Response(serializer.data)
+            result = FollowRelation.objects.get_or_none(follower=user)
+            if result is not None:
+                serializer = FollowRelationSerializer(result)
+
+                return Response(data=serializer.data,
+                                status=status.HTTP_200_OK)
+            else:
+                result = FollowRelation.objects.create(follower=user)
+                serializer = FollowRelationSerializer(result)
+                return Response(data=serializer.data,
+                                status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False)
+    def my_follower(self, request):
+        pk = request.GET.get("pk", None)
+        user = User.objects.get_or_none(pk=pk)
+        result = FollowRelation.objects.filter(followee=user)
+        if result is not None:
+            serializer = FollowRelationSerializer(result, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
