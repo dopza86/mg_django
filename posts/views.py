@@ -7,6 +7,7 @@ from rest_framework import status
 from .serializers import PostSerializer
 from .models import Post
 from .permissions import IsSelf
+from users.models import User
 
 # Create your views here.
 
@@ -79,10 +80,13 @@ class PostViewSet(ModelViewSet):
                                         context={"request": request})
             return paginator.get_paginated_response(serializer.data)
 
-    # @action(detail=False, methods=["post"])
-    # @permission_classes([permissions.IsAuthenticated])
-    # def create_post(self, request):
-    #     user = request.user
-    #     tag = self.validated_data
-
-    #     return Response(status=status.HTTP_200_OK)
+    @action(detail=False)
+    def my_post(self, request):
+        user_pk = request.GET.get("user_pk", None)
+        user = User.objects.get_or_none(pk=user_pk)
+        if user is not None:
+            results = Post.objects.filter(user=user)
+            serializer = PostSerializer(results, many=True)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
