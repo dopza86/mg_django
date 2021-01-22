@@ -35,10 +35,14 @@ class User(AbstractUser):
                                   max_length=50,
                                   null=True,
                                   blank=True)
-    bio = models.TextField(verbose_name="소개", default="", blank=True)
+    bio = models.TextField(verbose_name="소개",
+                           default="",
+                           null=True,
+                           blank=True)
 
     avatar = models.ImageField(verbose_name="사진",
                                upload_to="avatars",
+                               null=True,
                                blank=True)
     email_verified = models.BooleanField(verbose_name="메일인증", default=False)
     email_secret = models.CharField(verbose_name="메일인증키",

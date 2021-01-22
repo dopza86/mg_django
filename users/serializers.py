@@ -2,12 +2,14 @@ from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from .models import User
 from follow_relation import models as follow_models
+from drf_extra_fields.fields import Base64ImageField
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(write_only=True)
     is_follower = serializers.SerializerMethodField()
+    avatar = Base64ImageField()
 
     class Meta:
         model = User
@@ -30,7 +32,8 @@ class UserSerializer(serializers.ModelSerializer):
         instance.last_name = validated_data.get("last_name",
                                                 instance.last_name)
         instance.email = validated_data.get("email", instance.email)
-
+        instance.bio = validated_data.get("bio", instance.bio)
+        instance.avatar = validated_data.get("avatar", instance.avatar)
         instance.save()
 
         return instance
