@@ -32,7 +32,7 @@ class PostViewSet(ModelViewSet):
         caption = request.data.get("caption", None)
         user = request.data.get("user", None)
         tags = request.data.get("tags", None)
-        print(user)
+
         filter_kwargs = {}
 
         if user is not None:
@@ -40,7 +40,7 @@ class PostViewSet(ModelViewSet):
             posts = Post.objects.filter(user__username=user).distinct()
             paginator = self.paginator
             results = paginator.paginate_queryset(posts, request)
-            print(results)
+
             serializer = PostSerializer(results,
                                         many=True,
                                         context={"request": request})
@@ -52,7 +52,7 @@ class PostViewSet(ModelViewSet):
             paginator = self.paginator
             posts = Post.objects.filter(tags__name__in=hashtags).distinct()
             results = paginator.paginate_queryset(posts, request)
-            print(results)
+
             serializer = PostSerializer(results,
                                         many=True,
                                         context={"request": request})
@@ -74,7 +74,7 @@ class PostViewSet(ModelViewSet):
                 posts = Post.objects.all()
 
             results = paginator.paginate_queryset(posts, request)
-            print(results)
+
             serializer = PostSerializer(results,
                                         many=True,
                                         context={"request": request})
@@ -87,6 +87,7 @@ class PostViewSet(ModelViewSet):
         if user is not None:
             results = Post.objects.filter(user=user)
             serializer = PostSerializer(results, many=True)
+
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)

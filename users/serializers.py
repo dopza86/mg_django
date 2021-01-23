@@ -58,29 +58,3 @@ class UserPasswordSerializer(serializers.ModelSerializer):
             "username",
             "password",
         )
-
-    def update(self, instance, validated_data):
-        instance.password = make_password(
-            validated_data.get("password", instance.password))
-
-        instance.save()
-        return instance
-
-
-# class UserPasswordSerializer(serializers.ModelSerializer):
-
-#     class Meta:
-#         model = User
-#         fields = (
-#             "id",
-#             "username",
-#             "password",)
-
-#     def update(self, instance, validated_data):
-#         for attr, value in validated_data.items():
-#             if attr == 'password':
-#                 instance.set_password(value)
-#             else:
-#                 setattr(instance, attr, value)
-#         instance.save()
-#         return instance

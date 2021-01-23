@@ -179,7 +179,7 @@ EMAIL_FROM = "noreply@sandbox1eef570fd7ee4a9ca110f0f2fad9115e.mailgun.org"
 # rest_auth
 
 REST_USE_JWT = True
-
+OLD_PASSWORD_FIELD_ENABLED = True
 ACCOUNT_LOGOUT_ON_GET = True
 
 CORS_ORIGIN_ALLOW_ALL = True
