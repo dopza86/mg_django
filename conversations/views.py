@@ -79,8 +79,7 @@ class MessageModelViewSet(ModelViewSet):
         pk = request.GET.get("pk", None)
         conversation = Conversation.objects.get_or_none(pk=pk)
         paginator = self.paginator
-        print(request.data)
-        print(message)
+
         if request.user.is_authenticated:
             if not conversation:
                 return Response(status=status.HTTP_404_NOT_FOUND)

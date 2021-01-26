@@ -8,9 +8,12 @@ from taggit_serializer.serializers import (TagListSerializerField,
 from .models import Post, Photo
 from likes import models as likes_models
 from comments import models as comments_models
+from drf_extra_fields.fields import Base64ImageField
 
 
 class PhotoSerializer(serializers.ModelSerializer):
+    file = Base64ImageField()
+
     class Meta:
         model = Photo
         exclude = ("")

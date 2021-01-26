@@ -59,26 +59,7 @@ class UsersViewSet(ModelViewSet):
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    # @action(detail=True, methods=["put"])
-    # def update_password(self, request, pk):
-    #     user = User.objects.get(pk=pk)
 
-    #     if user is not None:
-    #         serializer = UserPasswordSerializer(user,
-    #                                             data=request.data,
-    #                                             partial=True)
-
-    #         if serializer.is_valid():
-
-    #             user = serializer.save()
-
-    #             return Response(UserPasswordSerializer(user).data)
-    #         else:
-    #             return Response(serializer.errors,
-    #                             status=status.HTTP_400_BAD_REQUEST)
-    #         return Response()
-    #     else:
-    #         return Response(status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=["post"])
     def login(self, request):

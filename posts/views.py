@@ -4,12 +4,33 @@ from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import PostSerializer
-from .models import Post
+from rest_framework.pagination import PageNumberPagination
+
+from .serializers import PostSerializer, PhotoSerializer
+from .models import Post, Photo
 from .permissions import IsSelf
 from users.models import User
 
+
 # Create your views here.
+class CustomResultsSetPagination(PageNumberPagination):
+    page_size = 30
+    page_size_query_param = 'page_size'
+
+
+class PhotoViewSet(ModelViewSet):
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer
+    pagination_class = CustomResultsSetPagination
+
+    def get_permissions(self):
+        if self.action == 'list' or self.action == "retrieve":
+            permission_classes = [permissions.AllowAny]
+        elif self.action == 'create':
+            permission_classes = [permissions.IsAuthenticated]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
 
 
 class PostViewSet(ModelViewSet):

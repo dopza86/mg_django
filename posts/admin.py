@@ -8,10 +8,9 @@ class PostAdmin(admin.ModelAdmin):
     list_per_page = 10
 
     list_display = (
-        "name",
+        "user",
         "location",
         "caption",
-        "user",
         "count_photos",
     )
 
