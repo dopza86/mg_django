@@ -54,7 +54,7 @@ class Post(core_models.TimeStampedModel):
         ordering = ["-pk"]
 
     def __str__(self):
-        return self.name
+        return f"{self.user.username} // {self.pk}"
 
     def first_photo(self):
         try:

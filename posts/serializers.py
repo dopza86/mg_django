@@ -26,6 +26,7 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
     is_liked = serializers.SerializerMethodField()
     like_list = serializers.SerializerMethodField()
     comment_list = serializers.SerializerMethodField()
+    my_posts_length = serializers.SerializerMethodField()
     tags = TagListSerializerField()
 
     def create(self, validated_data):
@@ -41,17 +42,6 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
         post.save()
         return post
 
-    def get_is_liked(self, obj):
-        if 'request' in self.context:
-            request = self.context['request']
-            try:
-                likes_models.Like.objects.get(user__id=request.user.id,
-                                              post__id=obj.id)
-                return True
-            except likes_models.Like.DoesNotExist:
-                return False
-        return False
-
     def get_like_list(self, obj):
         request = self.context.get("request")
         if request is not None:
@@ -60,6 +50,18 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
                 return LikeSerializer(result).data
             except likes_models.Like.DoesNotExist:
                 pass
+
+    def get_is_liked(self, obj):
+        if 'request' in self.context:
+            request = self.context['request']
+            try:
+
+                likes_models.Like.objects.get(user__id=request.user.id,
+                                              post__id=obj.id)
+                return True
+            except likes_models.Like.DoesNotExist:
+                return False
+        return False
 
     def get_comment_list(self, obj):
         request = self.context.get("request")
@@ -72,7 +74,11 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
             except comments_models.Comment.DoesNotExist:
                 pass
 
+    def get_my_posts_length(self, obj):
+        my_posts_length = self.context.get("my_posts_length")
+        return my_posts_length
+
     class Meta:
         model = Post
         fields = ('id', "user", "photos", "tags", "is_liked", "like_list",
-                  "comment_list", "caption", "location")
+                  "comment_list", "caption", "location", "my_posts_length")

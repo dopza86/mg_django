@@ -63,13 +63,15 @@ class FollowRelationViewSet(ModelViewSet):
 
             result = FollowRelation.objects.get_or_none(follower=user)
             if result is not None:
-                serializer = FollowRelationSerializer(result)
+                serializer = FollowRelationSerializer(
+                    result, context={"request": request})
 
                 return Response(data=serializer.data,
                                 status=status.HTTP_200_OK)
             else:
                 result = FollowRelation.objects.create(follower=user)
-                serializer = FollowRelationSerializer(result)
+                serializer = FollowRelationSerializer(
+                    result, context={"request": request})
                 return Response(data=serializer.data,
                                 status=status.HTTP_201_CREATED)
         else:
@@ -81,7 +83,9 @@ class FollowRelationViewSet(ModelViewSet):
         user = User.objects.get_or_none(pk=pk)
         result = FollowRelation.objects.filter(followee=user)
         if result is not None:
-            serializer = FollowRelationSerializer(result, many=True)
+            serializer = FollowRelationSerializer(result,
+                                                  many=True,
+                                                  context={"request": request})
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)

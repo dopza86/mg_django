@@ -55,9 +55,12 @@ THIRD_PARTY_APPS = [
     "django_seed",
     "rest_auth",
     'rest_framework.authtoken',
-    'rest_auth.registration',
-    'allauth',
     "corsheaders",
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'rest_auth.registration',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
@@ -185,3 +188,8 @@ ACCOUNT_LOGOUT_ON_GET = True
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_CREDENTIALS = True
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_EMAIL_REQUIRED = (True)

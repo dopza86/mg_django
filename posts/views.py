@@ -36,6 +36,7 @@ class PhotoViewSet(ModelViewSet):
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    pagination_class = CustomResultsSetPagination
 
     def get_permissions(self):
         if self.action == 'list' or self.action == "retrieve":
@@ -105,9 +106,17 @@ class PostViewSet(ModelViewSet):
     def my_post(self, request):
         user_pk = request.GET.get("user_pk", None)
         user = User.objects.get_or_none(pk=user_pk)
+        paginator = self.paginator
         if user is not None:
-            results = Post.objects.filter(user=user)
-            serializer = PostSerializer(results, many=True)
+            posts = Post.objects.filter(user=user)
+            my_posts_length = len(posts)
+            results = paginator.paginate_queryset(posts, request)
+            serializer = PostSerializer(results,
+                                        many=True,
+                                        context={
+                                            "request": request,
+                                            "my_posts_length": my_posts_length
+                                        })
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
